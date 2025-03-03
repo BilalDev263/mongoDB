@@ -1,0 +1,5 @@
+NOTE
+
+index : repere qui ameliore les requete de lecture mais ralenti les requete d'ecriture
+bson : json avancé avec plus de fonctionalité (fontion integrés…)
+upsert : update + insert (créé si existant)
