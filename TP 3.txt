@@ -1,0 +1,67 @@
+TP 3
+
+Partie 2.1
+
+db.livres.updateMany(
+  {},
+  { $set: { disponible: true } }
+);
+
+2.2
+
+db.livres.find({
+publishedDate : { $gt: "2000" }
+
+
+})
+
+2.3
+
+db.livres.find({
+authors : { $eq: "['Veronica Haddon']" }
+
+
+})
+
+2.4
+
+db.livres.find({
+note_moyenne : { $gt: 4 }
+
+
+})
+
+2.5
+
+db.utilisateurs.find({
+"adresse.ville" : { $eq: "Paris" }
+
+
+})
+
+2.6
+
+db.livres.find({
+genre : { $in: ["Philosophie"] }
+
+
+})
+
+2.7
+
+db.livres.find({
+note_moyenne : { $gt: 4 },
+prix : { $lt: 15 }
+
+
+
+})
+
+2.8
+
+db.utilisateurs.find({
+"livres_empruntes.titre" : { $eq: "Le Comte de Monte-Cristo" }
+
+
+
+})
