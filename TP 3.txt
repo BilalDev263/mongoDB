@@ -7,6 +7,11 @@ db.livres.updateMany(
   { $set: { disponible: true } }
 );
 
+db.livres.find({
+disponible : { $eq : true}
+}
+)
+
 2.2
 
 db.livres.find({
@@ -65,3 +70,138 @@ db.utilisateurs.find({
 
 
 })
+
+3.1
+db.livres.updateOne(
+    { "_id": ObjectId("67c5c9c36b722150d91e5224") },
+    { "$set": { "titre": "Les MisérablesLes Misérables" } }
+);
+
+3.2
+
+db.livres.updateMany(
+    {},
+    { "$set": { "stock": 5 } }
+);
+
+
+3.3
+db.livres.updateOne(
+    { "_id": ObjectId("id") },
+    { "$set": { "disponible": false } }
+);
+
+
+3.4
+
+db.utilisateurs.updateOne(
+    { "email": "jean.martin@example.com" },
+    {
+        "$push": {
+            "livres_empruntes": {
+                "livre_id": ObjectId("97c5c9c36b722150d91e5228"),
+                "titre": "Livre de la junglee",
+                "date_emprunt": { "$date": "2024-03-03T00:00:00Z" },
+                "date_retour_prevue": { "$date": "2024-04-03T00:00:00Z" }
+            }
+        }
+    }
+);
+
+3.5
+db.utilisateurs.updateOne(
+    { "email": "jean.martin@example.com" },
+    { 
+        "$set": { 
+            "adresse.rue": "Rue",
+            "adresse.ville": "Lyon",
+            "adresse.code_postal": "69100"
+        }
+    }
+);
+
+
+3.6
+
+db.utilisateurs.updateOne(
+    { "email": "jean.martin@example.com" },
+    { "$addToSet": { "tags": "tag500" } }
+);
+
+
+3.7
+
+db.livres.updateOne(
+    { "_id": ObjectId("id") },
+    { "$set": { "note_moyenne": 5 } }
+);
+
+
+4.1
+
+db.utilisateurs.deleteOne(
+    { "nom": "Durand" }
+    
+);
+
+4.2
+
+db.livres.deleteMany(
+    { "auteur": "Nom de l'Auteur" }
+);
+
+
+4.3
+
+db.utilisateurs.deleteOne(
+    { "email": "utilisateur@example.com" }
+);
+
+
+5.1
+db.livres.find(
+).sort({ "note_moyenne": -1 });
+
+5.2
+
+db.livres.find(
+).sort({ "date_publication": 1 }).limit(3);
+
+5.3
+
+db.livres.countDocuments({ 
+
+auteur: { $eq: "Antoine de Saint-Exupéry" }
+});
+
+5.4
+
+db.livres.find(
+  {},
+{
+titre: 1, auteur: 1 ,note_moyenne : 1 , _id: 0
+}
+);
+
+5.5
+
+db.utilisateurs.find({
+    "livres_empruntes.1": { "$exists": true },
+    "livres_empruntes.0": { "$exists": true }
+});
+
+5.6
+
+db.livres.find(
+{ "titre": { "$regex": "Petit" } 
+});
+
+
+5.7
+
+db.livres.find({
+    "prix": { "$gte": 10, "$lte": 20 }
+});
+
+
+
