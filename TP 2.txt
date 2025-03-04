@@ -85,7 +85,7 @@ EXO 1.2 : db.ecommerce_produits.insertMany([
     sous_catégorie: "Enceintes",
     caractéristiques: { puissance: "20W", étanchéité: "IPX7" },
     commentaires: [{ utilisateur: "Hugo", note: 4, texte: "Bonne autonomie" }],
-    tags: ["musique", "portable"]
+    tags: ["musiques", "portable"]
   },
   {
     nom: "Caméra de sécurité",
