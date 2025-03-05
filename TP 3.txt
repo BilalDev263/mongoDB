@@ -202,3 +202,63 @@ db.livres.find(
 db.livres.find({
     "prix": { "$gte": 10, "$lte": 20 }
 });
+
+
+6.1
+
+1.
+
+db.createCollection("emprunts");
+
+2.
+
+db.emprunts.insertMany([
+  {
+    utilisateur_id: ObjectId("657a2f7e4b5c3d1f8a3e4b29"),
+    livre_id: ObjectId("657b3f8e4c6d3e2f9b4d5c30"),
+    date_emprunt: new Date("2023-02-20"),
+    date_retour_prevue: new Date("2023-03-20"),
+    date_retour_effective: null,
+    statut: "en cours"
+  },
+  {
+    utilisateur_id: ObjectId("657a2f7e4b5c3d1f8a3e4b31"),
+    livre_id: ObjectId("657b3f8e4c6d3e2f9b4d5c32"),
+    date_emprunt: new Date("2023-04-10"),
+    date_retour_prevue: new Date("2023-05-10"),
+    date_retour_effective: new Date("2023-05-08"),
+    statut: "retourné"
+  },
+  {
+    utilisateur_id: ObjectId("657a2f7e4b5c3d1f8a3e4b33"),
+    livre_id: ObjectId("657b3f8e4c6d3e2f9b4d5c34"),
+    date_emprunt: new Date("2023-06-15"),
+    date_retour_prevue: new Date("2023-07-15"),
+    date_retour_effective: null,
+    statut: "en cours"
+  }
+]);
+
+
+6.2
+
+1.
+
+point fort
+Lecture rapide
+Gestion des utilisateurs et emprunts simple
+Scalabilité 
+
+point negatif
+Taille du document utilisateur peut devenir trop grande si de nombreux emprunts sont stockés
+Problèmes de mise à jour si l'on doit modifier plusieurs emprunts en une seule requête
+Nécessite des jointures (`$lookup`) pour récupérer les emprunts liés à un utilisateur ou à un livre
+
+2.
+
+Pour une application réelle l'approche référencée est préférable car facilite la gestion des emprunts.
+
+3.
+
+ajouter un champ `numeros_id` dans `livres` pour gérer les copies d’un livre
+créer une collection `numeros` où chaque copie a un `livre_id` et un statut

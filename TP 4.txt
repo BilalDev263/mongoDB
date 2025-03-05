@@ -1,0 +1,59 @@
+TP 4
+
+1.1
+
+1.
+
+
+
+2.
+
+db.livreExcel.find({
+Title : "Its Only Art If Its Well Hung!"
+}).explain("executionStats")
+
+
+db.livreExcel.find({
+ "authors": "['Julie Strain']" 
+}).explain("executionStats");
+
+db.livreExcel.find({
+    "prix": { "$gte": 10, "$lte": 20 },
+    "note_moyenne": { "$gte": 4 }
+}).explain("executionStats");
+
+
+3.
+
+| Requête                     | totalDocsExamined   | executionTimeMillis  | Type d'étape utilisée |
+|-----------------------------|-------------------  |----------------------|-----------------------|
+| Recherche par titre         | 212404              | 127                  | COLLSCAN              |
+| Recherche par auteur        | 212404              | 267                  | COLLSCAN              |
+| Recherche par plage de prix | 212404              | 191                  | COLLSCAN              |
+
+
+
+1.2
+
+db.livreExcel.createIndex({ "Title": 1 });
+
+db.livreExcel.createIndex({ "authors": 1 });
+
+db.livreExcel.createIndex({ "prix": 1, "note_moyenne": 1 });
+
+
+
+| Requête                     | totalDocsExamined   | executionTimeMillis  | Type d'étape utilisée |
+|-----------------------------|-------------------  |----------------------|-----------------------|
+| Recherche par titre         | 1                   | 4                    | IXSCAN                |
+| Recherche par auteur        | 1                   | 2                    | IXSCAN                |
+| Recherche par plage de prix | 0                   | 1                    | IXSCAN                |
+
+
+1.3
+
+1.
+db.livreExcel.createIndex({ Titre: "text" , descritpion : "text" });
+
+db.livreExcel.find({ "$text": { "$search": "Titre_text" } })
+
