@@ -57,3 +57,336 @@ db.livreExcel.createIndex({ Titre: "text" , descritpion : "text" });
 
 db.livreExcel.find({ "$text": { "$search": "Titre_text" } })
 
+2.
+db.livreExcel.find({ "$text": { "$search": "art" } }).explain("executionStats");
+
+3.
+db.sessions_utilisateurs.createIndex(
+  { "date_derniere_activite": 1 },
+  { expireAfterSeconds: 30 }
+);
+
+4.
+
+db.sessions_utilisateurs.insertMany([
+  {
+    utilisateur_id: ObjectId("657a2f7e4b5c3d1f8a3e4b29"),
+    date_derniere_activite: new Date("2024-03-06T10:00:00Z"),
+    donnees_session: {
+      ip: "192.168.1.10",
+      navigateur: "Chrome",
+      appareil: "PC"
+    }
+  },
+  {
+    utilisateur_id: ObjectId("657a2f7e4b5c3d1f8a3e4b31"),
+    date_derniere_activite: new Date("2024-03-06T12:15:00Z"),
+    donnees_session: {
+      ip: "192.168.1.20",
+      navigateur: "Firefox",
+      appareil: "Mobile"
+    }
+  },
+  {
+    utilisateur_id: ObjectId("657a2f7e4b5c3d1f8a3e4b33"),
+    date_derniere_activite: new Date("2024-03-06T14:30:00Z"),
+    donnees_session: {
+      ip: "192.168.1.30",
+      navigateur: "Safari",
+      appareil: "MacBook"
+    }
+  }
+]);
+
+1.4
+
+
+db.livreExcel.createIndex({ "Title": 1, "note_moyenne": 1 });
+
+
+db.livreExcel.find(
+  { "Title": "Its Only Art If Its Well Hung!" },
+  { "Title": 1, "note_moyenne": 1, "_id": 0 }
+).explain("executionStats");
+
+db.livreExcel.createIndex({ "ISBN": 1 }, { unique: true });
+
+db.livreExcel.insertOne({ "Title": "Maupassant", "ISBN": "1234567890" });
+
+db.livreExcel.insertOne({ "Title": "Livre Maupassant", "ISBN": "1234567890" }); erreur
+
+db.livreExcel.createIndex(
+  { "Title": 1 },
+  { partialFilterExpression: { "disponible": true } }
+);
+
+db.setProfilingLevel(1, 100);
+
+
+db.livreExcel.getIndexes(); 
+
+db.livreExcel.dropIndex("index_a_supprimer");
+
+2.1
+
+db.utilisateurs.updateMany(
+  {},
+  {
+    $set: {
+      "adresse.localisation": {
+        type: "Point",
+        coordinates: [2.3522, 48.8566]
+      }
+    }
+  }
+);
+
+db.createCollection("bibliotheques");
+
+db.bibliotheques.insertMany([
+  {
+    nom: "Bibliothèque Nationale",
+    adresse: "Quai François Mauriac, Paris",
+    localisation: {
+      type: "Point",
+      coordinates: [2.3768, 48.8339]
+    },
+    zone_service: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [2.3700, 48.8300],
+          [2.3800, 48.8300],
+          [2.3800, 48.8400],
+          [2.3700, 48.8400],
+          [2.3700, 48.8300]
+        ]
+      ]
+    }
+  },
+  {
+    nom: "Bibliothèque de Lyon",
+    adresse: "Place de la République, Lyon",
+    localisation: {
+      type: "Point",
+      coordinates: [4.8357, 45.7640]
+    },
+    zone_service: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [4.8300, 45.7600],
+          [4.8400, 45.7600],
+          [4.8400, 45.7700],
+          [4.8300, 45.7700],
+          [4.8300, 45.7600]
+        ]
+      ]
+    }
+  },
+  {
+    nom: "Bibliothèque de Marseille",
+    adresse: "Rue de Rome, Marseille",
+    localisation: {
+      type: "Point",
+      coordinates: [5.3811, 43.2965]
+    },
+    zone_service: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [5.3750, 43.2900],
+          [5.3850, 43.2900],
+          [5.3850, 43.3000],
+          [5.3750, 43.3000],
+          [5.3750, 43.2900]
+        ]
+      ]
+    }
+  }
+]);
+
+db.utilisateurs.createIndex({ "adresse.localisation": "2dsphere" });
+
+db.bibliotheques.createIndex({ "localisation": "2dsphere" });
+
+2.2
+
+2.3
+
+3.1
+
+db.livreExcel.aggregate([
+  {
+    $group: {
+      _id: "$editeur",
+      nombre_livres: { $sum: 1 },
+      nombre_genres: { $addToSet: "$genre" },
+      nombre_auteurs: { $addToSet: "$auteur" },
+      note_moyenne: { $avg: "$note_moyenne" }
+    }
+  },
+  {
+    $project: {
+      nombre_livres: 1,
+      nombre_genres: { $size: "$nombre_genres" },
+      nombre_auteurs: { $size: "$nombre_auteurs" },
+      note_moyenne: 1
+    }
+  }
+]);
+
+db.utilisateurs.updateMany(
+  {},
+  {
+    $set: {
+      livres_empruntes: [
+        {
+          livre_id: ObjectId("657b3f8e4c6d3e2f9b4d5c30"),
+          date_emprunt: new Date("2024-01-15"),
+          date_retour_prevue: new Date("2024-02-15"),
+          statut: "en cours"
+        }
+      ]
+    }
+  }
+);
+
+db.utilisateurs.aggregate([
+  {
+    $unwind: "$livres_empruntes"
+  },
+  {
+    $group: {
+      _id: "$adresse.ville",
+      nombre_emprunts: { $sum: 1 },
+      utilisateurs_uniques: { $addToSet: "$_id" }
+    }
+  },
+  {
+    $project: {
+      nombre_emprunts: 1,
+      utilisateurs_uniques: { $size: "$utilisateurs_uniques" }
+    }
+  }
+]);
+
+3.2
+
+db.emprunts.aggregate([
+  {
+    $addFields: {
+      duree_emprunt: {
+        $dateDiff: {
+          startDate: "$date_emprunt",
+          endDate: { $ifNull: ["$date_retour_effective", "$date_retour_prevue"] },
+          unit: "day"
+        }
+      },
+      en_retard: {
+        $cond: [{ $gt: ["$date_retour_effective", "$date_retour_prevue"] }, 1, 0]
+      }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      duree_moyenne: { $avg: "$duree_emprunt" },
+      duree_min: { $min: "$duree_emprunt" },
+      duree_max: { $max: "$duree_emprunt" },
+      total_emprunts: { $sum: 1 },
+      emprunts_retard: { $sum: "$en_retard" }
+    }
+  },
+  {
+    $project: {
+      duree_moyenne: 1,
+      duree_min: 1,
+      duree_max: 1,
+      pourcentage_retard: { $multiply: [{ $divide: ["$emprunts_retard", "$total_emprunts"] }, 100] }
+    }
+  }
+]);
+
+
+db.emprunts.aggregate([
+  {
+    $lookup: {
+      from: "livreExcel",
+      localField: "livre_id",
+      foreignField: "_id",
+      as: "livre"
+    }
+  },
+  {
+    $lookup: {
+      from: "utilisateurs",
+      localField: "utilisateur_id",
+      foreignField: "_id",
+      as: "utilisateur"
+    }
+  },
+  {
+    $unwind: "$livre"
+  },
+  {
+    $unwind: "$utilisateur"
+  },
+  {
+    $group: {
+      _id: "$livre.Title",
+      nombre_emprunts: { $sum: 1 },
+      emprunteurs: { $addToSet: "$utilisateur.nom" }
+    }
+  },
+  {
+    $sort: { nombre_emprunts: -1 }
+  }
+]);
+
+
+db.livreExcel.aggregate([
+  {
+    $facet: {
+      statistiques_globales: [
+        {
+          $group: {
+            _id: null,
+            total_livres: { $sum: 1 },
+            prix_moyen: { $avg: "$prix" },
+            note_moyenne: { $avg: "$note_moyenne" }
+          }
+        }
+      ],
+      top_5_livres: [
+        { $sort: { note_moyenne: -1 } },
+        { $limit: 5 },
+        { $project: { Title: 1, note_moyenne: 1 } }
+      ],
+      repartition_langue: [
+        {
+          $group: {
+            _id: "$langue",
+            nombre: { $sum: 1 }
+          }
+        }
+      ],
+      repartition_decennie: [
+        {
+          $project: {
+            decennie: { $subtract: [{ $year: "$date_publication" }, { $mod: [{ $year: "$date_publication" }, 10] }] }
+          }
+        },
+        {
+          $group: {
+            _id: "$decennie",
+            nombre: { $sum: 1 }
+          }
+        }
+      ]
+    }
+  }
+]);
+
+
+
